@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.Python
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# Entornos y editores
+.env
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Salidas de trabajo
+*.log
+.cache/
+cache_pipeline/
+
+# Material del curso: se conserva en la carpeta local pero no se publica, para no
+# difundir en un repositorio público el enunciado, la rúbrica y los tutoriales de
+# la Universidad de los Andes.
+docs/
+notebooks/referencia/
+
+# El HTML exportado del notebook es un entregable: se genera al final y no se
+# versiona en cada iteración. Quita esta línea si prefieres tenerlo en el repo.
+notebooks/*.html
+
+# OJO: resources/models/*.joblib SÍ debe versionarse. Streamlit Community Cloud
+# despliega directamente desde el repositorio y la aplicación no arranca sin el
+# artefacto del modelo.
