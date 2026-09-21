@@ -29,6 +29,6 @@ notebooks/referencia/
 # versiona en cada iteración. Quita esta línea si prefieres tenerlo en el repo.
 notebooks/*.html
 
-# OJO: resources/models/*.joblib SÍ debe versionarse. Streamlit Community Cloud
-# despliega directamente desde el repositorio y la aplicación no arranca sin el
-# artefacto del modelo.
+# OJO: resources/models/preparacion.joblib y resources/models/modelo_mlp.keras SÍ
+# deben versionarse. Streamlit Community Cloud despliega directamente desde el
+# repositorio y la aplicación no arranca sin los dos artefactos.

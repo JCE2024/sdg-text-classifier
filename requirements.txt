@@ -1,7 +1,7 @@
 # Dependencias de ejecución de la aplicación Streamlit.
 # Las versiones están fijadas a las del entorno de entrenamiento: un artefacto
-# .joblib generado con una versión de scikit-learn o numpy y cargado con otra
-# distinta puede fallar o, peor, cargar en silencio y predecir mal.
+# .joblib o .keras generado con una versión de scikit-learn, numpy o keras y
+# cargado con otra distinta puede fallar o, peor, cargar en silencio y predecir mal.
 streamlit==1.51.0
 pandas==2.3.3
 numpy==2.3.5
@@ -9,3 +9,9 @@ scikit-learn==1.7.2
 joblib==1.5.2
 nltk==3.9.2
 openpyxl==3.1.5
+
+# El clasificador es un perceptrón multicapa de Keras. En Linux, que es donde
+# corre Streamlit Community Cloud, tensorflow-cpu pesa bastante menos que
+# tensorflow y sirve igual porque la aplicación solo hace inferencia.
+tensorflow-cpu==2.21.0
+keras==3.15.1

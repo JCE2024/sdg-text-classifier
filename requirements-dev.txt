@@ -2,6 +2,10 @@
 -r requirements.txt
 
 matplotlib==3.10.6
-seaborn==0.13.2
 jupyterlab==4.4.7
 nbconvert==7.16.6
+
+# Búsqueda de hiperparámetros. keras-tuner importa tensorboard cuando el backend
+# es tensorflow, así que hay que instalar los dos.
+keras-tuner==1.4.8
+tensorboard==2.21.0

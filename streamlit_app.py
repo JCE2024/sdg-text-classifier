@@ -1,8 +1,7 @@
 """Aplicación Streamlit para el bono del microproyecto 2.
 
-Cumple los tres requisitos del bono: recibe texto libre, lo procesa con el
-MISMO pipeline construido en el notebook (cargado desde el artefacto .joblib)
-y devuelve el ODS predicho.
+Cumple los tres requisitos del bono: recibe texto libre, lo procesa con el mismo
+pipeline construido en el notebook y devuelve el ODS predicho.
 
 Ejecución local:
     streamlit run streamlit_app.py
@@ -16,7 +15,7 @@ import streamlit as st
 from src.DataPreprocessing import NOMBRES_ODS
 from src.ModelController import ModelController
 
-st.set_page_config(page_title="Clasificador de textos por ODS", page_icon="🌍", layout="wide")
+st.set_page_config(page_title="Clasificador de textos por ODS", layout="wide")
 
 EJEMPLOS = {
     "Educación": (
@@ -38,15 +37,15 @@ EJEMPLOS = {
 
 
 @st.cache_resource
-def cargar_controlador() -> ModelController:
+def cargar_controlador():
     """Carga el modelo una sola vez y lo reutiliza entre interacciones."""
     return ModelController()
 
 
-def main() -> None:
-    st.title("🌍 Clasificación de textos según los ODS")
+def main():
+    st.title("Clasificación de textos según los ODS")
     st.caption(
-        "Microproyecto 2 — Machine Learning No Supervisado (MAIA). "
+        "Microproyecto 2 de Machine Learning No Supervisado (MAIA). "
         "El modelo asigna a un texto en español el Objetivo de Desarrollo "
         "Sostenible con el que guarda mayor relación semántica."
     )
@@ -56,8 +55,8 @@ def main() -> None:
     except FileNotFoundError as error:
         st.error(str(error))
         st.info(
-            "El archivo `resources/models/modelo_ods.joblib` no está versionado "
-            "hasta que entrenes el modelo. Ejecuta el notebook y vuelve a desplegar."
+            "Los artefactos `preparacion.joblib` y `modelo_mlp.keras` se generan al "
+            "ejecutar la sección 9 del notebook. Entrénalos y vuelve a desplegar."
         )
         st.stop()
 
@@ -65,7 +64,7 @@ def main() -> None:
 
     with tab_texto:
         ejemplo = st.selectbox(
-            "Cargar un ejemplo (opcional)", ["—"] + list(EJEMPLOS), index=0
+            "Cargar un ejemplo (opcional)", ["Ninguno"] + list(EJEMPLOS), index=0
         )
         texto = st.text_area(
             "Escribe o pega un texto para clasificar",
@@ -79,19 +78,17 @@ def main() -> None:
                 st.warning("Ingresa un texto antes de clasificar.")
             else:
                 resultado = controlador.predecir(texto)
-                st.success(
-                    f"**ODS {resultado['ods']} — {resultado['nombre']}**"
+                st.success(f"ODS {resultado['ods']}. {resultado['nombre']}")
+                st.metric("Confianza del modelo", f"{resultado['confianza']:.1%}")
+
+                st.subheader("Alternativas más probables")
+                alternativas = pd.DataFrame(resultado["alternativas"])
+                alternativas["probabilidad"] = alternativas["probabilidad"].map("{:.1%}".format)
+                st.dataframe(alternativas, hide_index=True, use_container_width=True)
+                st.caption(
+                    "Varios ODS se solapan temáticamente, así que conviene revisar "
+                    "las alternativas y no solo la clase ganadora."
                 )
-                if resultado["confianza"] is not None:
-                    st.metric("Confianza del modelo", f"{resultado['confianza']:.1%}")
-                    st.subheader("Alternativas más probables")
-                    alternativas = pd.DataFrame(resultado["alternativas"])
-                    alternativas["probabilidad"] = alternativas["probabilidad"].map("{:.1%}".format)
-                    st.dataframe(alternativas, hide_index=True, use_container_width=True)
-                    st.caption(
-                        "Varios ODS se solapan temáticamente, por lo que conviene "
-                        "revisar las alternativas y no solo la clase ganadora."
-                    )
 
     with tab_archivo:
         st.write(
@@ -118,17 +115,18 @@ def main() -> None:
     with st.sidebar:
         st.header("Sobre el modelo")
         st.write(
-            "El texto pasa por el mismo pipeline del entrenamiento: "
-            "limpieza en español (stopwords y stemming), vectorización TF-IDF "
-            "y reducción de dimensionalidad con LSA (`TruncatedSVD`)."
+            "El texto pasa por el mismo pipeline del entrenamiento: limpieza en "
+            "español con stopwords y stemming, vectorización TF-IDF y reducción a "
+            "20 componentes con LSA (`TruncatedSVD`). Sobre ese espacio predice un "
+            "perceptrón multicapa entrenado con Keras."
         )
         st.write(
-            f"Clases disponibles: **{len(controlador.clases)}** "
+            f"Clases disponibles: {len(controlador.clases)} "
             f"(ODS {min(controlador.clases)} a {max(controlador.clases)})."
         )
         with st.expander("Ver los 17 ODS"):
             for codigo, nombre in NOMBRES_ODS.items():
-                st.write(f"**{codigo}.** {nombre}")
+                st.write(f"{codigo}. {nombre}")
 
 
 if __name__ == "__main__":
